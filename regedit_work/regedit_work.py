@@ -1,4 +1,7 @@
 ﻿import winreg
+import time
+from pathlib import Path
+from datetime import datetime
 
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 
@@ -51,8 +54,15 @@ def check_startup_program(name):
     except PermissionError:
         print("Permission denied!")
 
+def ensure_logs_folder():
+    folder_path = Path(__file__).parent / "data"
+    folder_path.mkdir(parents=True, exist_ok=True)
+    return folder_path
 
 def main():
+    folder_path = ensure_logs_folder()  
+    file_path = folder_path / "trial_checker"
+    file_path.touch(exist_ok=True)
     while True:
         print("\n--- Startup Manager ---")
         print("1. List all startup programs")
