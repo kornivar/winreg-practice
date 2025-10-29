@@ -59,10 +59,27 @@ def ensure_logs_folder():
     folder_path.mkdir(parents=True, exist_ok=True)
     return folder_path
 
+def read_usage_time(file_path):
+    if file_path.exists():
+        with open(file_path, "r") as f:
+            try:
+                return int(f.read())
+            except ValueError:
+                return 0.0
+    return 0.0
+
+def save_usage_time(file_path, seconds):
+    with open(file_path, "w") as f:
+        f.write(str(seconds))
+
 def main():
     folder_path = ensure_logs_folder()  
-    file_path = folder_path / "trial_checker"
+    file_path = folder_path / "trial_checker.txt"
     file_path.touch(exist_ok=True)
+
+    total_usage_time = read_usage_time(file_path)
+
+    start_time = time.time()
     while True:
         print("\n--- Startup Manager ---")
         print("1. List all startup programs")
@@ -90,5 +107,10 @@ def main():
             break
         else:
             print("Invalid choice. Try again.")
+    end_time = time.time()
+    session_time = end_time - start_time
+    total_usage_time = int(total_usage_time + session_time)
+    save_usage_time(file_path, total_usage_time)
+    print(f"Total usage time: {total_usage_time} seconds")
 
 main()
